@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>World Cup 2026 — Group Stage Simulator</title>
+<title>World Cup 2026 — Group & Knockout Simulator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -158,20 +158,69 @@
 
   @media (prefers-reduced-motion: reduce){ *{transition:none!important} }
   :focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  /* ---------- tabs ---------- */
+  .tabs{max-width:1320px; margin:0 auto; padding:16px 20px 0; display:flex; gap:6px; border-bottom:1px solid var(--line)}
+  .tab{font:inherit; font-weight:600; font-size:13.5px; color:var(--muted); background:transparent;
+    border:1px solid transparent; border-bottom:none; border-radius:9px 9px 0 0; padding:9px 16px; cursor:pointer; margin-bottom:-1px}
+  .tab:hover{color:var(--text)}
+  .tab.on{color:var(--text); background:var(--panel); border-color:var(--line); border-bottom:1px solid var(--panel)}
+  body.ko .progress-wrap, body.ko #grpActions{display:none}
+
+  /* ---------- knockout bracket ---------- */
+  .ko-wrap{max-width:1320px; margin:0 auto; padding:20px 20px 90px}
+  .ko-bar{display:flex; align-items:flex-end; gap:18px; flex-wrap:wrap; margin-bottom:6px}
+  .ko-intro{margin-right:auto}
+  .ko-intro .eyebrow{font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--q); font-weight:700}
+  .ko-intro h2{margin:3px 0 0; font-size:20px; font-weight:700; letter-spacing:-.01em}
+  .ko-intro p{margin:6px 0 0; font-size:12.5px; color:var(--muted); max-width:64ch; line-height:1.5}
+  .ko-actions{display:flex; gap:8px; flex-wrap:wrap}
+
+  .champ{height:0; overflow:hidden; margin:0}
+  .champ.show{height:auto; margin:12px 0 18px}
+  .champ-in{display:inline-flex; align-items:center; gap:16px; background:linear-gradient(90deg,rgba(245,181,68,.16),rgba(46,230,166,.08));
+    border:1px solid rgba(245,181,68,.45); border-radius:12px; padding:12px 22px}
+  .champ-in .cup{font-family:"Space Grotesk"; font-size:30px; font-weight:700; color:var(--third); line-height:1}
+  .champ-in .cl{display:block; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--third); font-weight:700}
+  .champ-in .cn{display:block; font-family:"Space Grotesk"; font-size:23px; font-weight:700; color:var(--text); line-height:1.15}
+
+  .bracket{display:flex; gap:12px; overflow-x:auto; padding:6px 2px 18px; align-items:stretch; scrollbar-width:thin}
+  .rnd{display:flex; flex-direction:column; min-width:160px; flex:0 0 auto}
+  .rnd.final{min-width:196px; justify-content:flex-start}
+  .rnd .rlab{font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); font-weight:700; text-align:center; padding-bottom:10px}
+  .rnd .cells{flex:1; display:flex; flex-direction:column; justify-content:space-around; gap:10px}
+  .rnd.final .cells{justify-content:flex-start; gap:0}
+  .m{background:var(--panel); border:1px solid var(--line); border-radius:9px; overflow:hidden; position:relative}
+  .slot{display:flex; align-items:center; gap:8px; padding:9px 11px; cursor:pointer; border-bottom:1px solid var(--line); transition:background .12s}
+  .slot:last-child{border-bottom:none}
+  .slot:hover:not(.empty){background:var(--panel2)}
+  .slot .tn{font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .slot .pt{margin-left:auto; font-size:9.5px; font-weight:700; color:var(--dim); letter-spacing:.03em; flex:0 0 auto}
+  .slot.win{background:var(--qbg)} .slot.win .tn{color:var(--q)} .slot.win .pt{color:var(--q)}
+  .slot.lose{opacity:.4}
+  .slot.empty{cursor:default}
+  .slot.empty .tn{font-weight:500; font-style:italic; color:var(--dim)}
+  .rnd.final .m.fin{border-color:rgba(245,181,68,.5); box-shadow:0 0 26px rgba(245,181,68,.14)}
+  .rnd.final .m.fin .slot.win{background:var(--thirdbg)} .rnd.final .m.fin .slot.win .tn{color:var(--third)} .rnd.final .m.fin .slot.win .pt{color:var(--third)}
+  .m.third{margin-top:16px}
+  .m.third .tlab{font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); font-weight:700; text-align:center; padding:6px 0 2px}
+  .rnd.left .m::after{content:''; position:absolute; right:-12px; top:50%; width:12px; height:1px; background:var(--line2)}
+  .rnd.right .m::before{content:''; position:absolute; left:-12px; top:50%; width:12px; height:1px; background:var(--line2)}
+  @media(max-width:680px){ .rnd{min-width:144px} .slot .tn{font-size:12px} .ko-wrap{padding:16px 12px 80px} }
 </style>
 </head>
 <body>
 <header>
   <div class="head-inner">
     <div class="brand">
-      <span class="eyebrow">Group Stage Simulator · Groups D–L</span>
+      <span class="eyebrow">Interactive Simulator</span>
       <h1>World Cup <span class="yr">2026</span></h1>
     </div>
     <div class="progress-wrap">
       <div class="meter"><i id="meterFill"></i></div>
       <span class="lab"><b id="progNum">0</b>/<span id="progTot">54</span> games</span>
     </div>
-    <div class="actions">
+    <div class="actions" id="grpActions">
       <label class="toggle" id="advToggle"><span class="switch"></span>Tiebreakers</label>
       <button class="btn ghost" id="btnRandom">Sim remaining <span class="k">randomly</span></button>
       <button class="btn ghost" id="btnReset">Reset to live</button>
@@ -179,6 +228,12 @@
   </div>
 </header>
 
+<nav class="tabs">
+  <button class="tab on" data-view="groups">Group Stage</button>
+  <button class="tab" data-view="knockout">Knockout</button>
+</nav>
+
+<div id="view-groups">
 <div class="wrap">
   <main>
     <div class="notebar">
@@ -220,6 +275,25 @@
       </div>
     </details>
   </aside>
+</div>
+</div><!-- /view-groups -->
+
+<div id="view-knockout" hidden>
+  <div class="ko-wrap">
+    <div class="ko-bar">
+      <div class="ko-intro">
+        <span class="eyebrow">Actual draw · Round of 32 → Final</span>
+        <h2>Knockout bracket</h2>
+        <p>Seeded with the real draw confirmed once the groups finished on June 27. Tap a team to send it through; everything downstream updates and re-clears as you change picks. Picks are saved on this device.</p>
+      </div>
+      <div class="ko-actions">
+        <button class="btn ghost" id="koRandom">Sim to final <span class="k">randomly</span></button>
+        <button class="btn ghost" id="koClear">Clear picks</button>
+      </div>
+    </div>
+    <div class="champ" id="champ"></div>
+    <div class="bracket" id="bracket"></div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -512,6 +586,122 @@ function toast(m){ const el=document.getElementById("toast"); el.textContent=m; 
 
 buildGroups();
 update();
+
+/* ================= KNOCKOUT BRACKET ================= */
+/* Real 2026 draw, confirmed after the group stage finished (June 27).
+   Each Round of 32 slot: [team, "positionGroup"]. Match numbers follow FIFA's
+   fixed schedule (R32 73-88, R16 89-96, QF 97-100, SF 101-102, 3rd 103, Final 104). */
+const KO = {
+  seeds:{
+    73:[["South Africa","2A"],["Canada","2B"]],
+    74:[["Germany","1E"],["Paraguay","3D"]],
+    75:[["Netherlands","1F"],["Morocco","2C"]],
+    76:[["Brazil","1C"],["Japan","2F"]],
+    77:[["France","1I"],["Sweden","3F"]],
+    78:[["Ivory Coast","2E"],["Norway","2I"]],
+    79:[["Mexico","1A"],["Ecuador","3E"]],
+    80:[["England","1L"],["DR Congo","3K"]],
+    81:[["USA","1D"],["Bosnia & H.","3B"]],
+    82:[["Belgium","1G"],["Senegal","3I"]],
+    83:[["Portugal","2K"],["Croatia","2L"]],
+    84:[["Spain","1H"],["Austria","2J"]],
+    85:[["Switzerland","1B"],["Iran","3G"]],
+    86:[["Argentina","1J"],["Cape Verde","2H"]],
+    87:[["Colombia","1K"],["Ghana","3L"]],
+    88:[["Australia","2D"],["Egypt","2G"]],
+  },
+  feed:{
+    89:[74,77], 90:[73,75], 91:[76,78], 92:[79,80],
+    93:[83,84], 94:[81,82], 95:[86,88], 96:[85,87],
+    97:[89,90], 98:[93,94], 99:[91,92], 100:[95,96],
+    101:[97,98], 102:[99,100], 104:[101,102],
+  },
+  cols:[
+    {lab:"Round of 32", side:"left",  ms:[74,77,73,75,83,84,81,82]},
+    {lab:"Round of 16", side:"left",  ms:[89,90,93,94]},
+    {lab:"Quarter-finals", side:"left", ms:[97,98]},
+    {lab:"Semi-final", side:"left",  ms:[101]},
+    {lab:"Final", side:"final", ms:[104,103]},
+    {lab:"Semi-final", side:"right", ms:[102]},
+    {lab:"Quarter-finals", side:"right", ms:[99,100]},
+    {lab:"Round of 16", side:"right", ms:[91,92,95,96]},
+    {lab:"Round of 32", side:"right", ms:[76,78,79,80,86,88,85,87]},
+  ]
+};
+const TAG={};
+Object.values(KO.seeds).forEach(p=>p.forEach(([n,t])=> TAG[n]=t));
+
+let koWin={};
+try{ const r=store.get("wc2026ko"); if(r) koWin=JSON.parse(r)||{}; }catch(e){ koWin={}; }
+function koSave(){ store.set("wc2026ko", JSON.stringify(koWin)); }
+
+function koParts(m){
+  if(m===103) return [koLoser(101), koLoser(102)];
+  if(KO.seeds[m]) return KO.seeds[m].map(x=>x[0]);
+  const f=KO.feed[m]; return [koWin[f[0]]||null, koWin[f[1]]||null];
+}
+function koLoser(m){ const w=koWin[m]; if(!w) return null; const p=koParts(m); return p[0]===w?p[1]:p[0]; }
+function koValidate(){
+  [89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104].forEach(m=>{
+    if(koWin[m]){ const p=koParts(m); if(!p.includes(koWin[m])) delete koWin[m]; }
+  });
+}
+function renderBracket(){
+  koValidate();
+  const root=document.getElementById("bracket");
+  root.innerHTML = KO.cols.map(col=>{
+    const cells = col.ms.map(m=>{
+      const isThird = m===103, isFinal = m===104;
+      const p=koParts(m), w=koWin[m];
+      const slot=(team,s)=>{
+        if(!team){
+          const f=KO.feed[m]; const lab = m===103 ? (s==="a"?"Loser SF1":"Loser SF2") : ("Winner "+f[s==="a"?0:1]);
+          return `<div class="slot empty"><span class="tn">${lab}</span></div>`;
+        }
+        const cls = w ? (team===w?"win":"lose") : "";
+        const tag = TAG[team] ? `<span class="pt">${TAG[team]}</span>` : "";
+        return `<div class="slot ${cls}" data-m="${m}" data-s="${s}"><span class="tn">${team}</span>${tag}</div>`;
+      };
+      const head = isThird ? `<div class="tlab">Third place</div>` : "";
+      return `<div class="m ${isFinal?"fin":""} ${isThird?"third":""}" data-m="${m}">${head}${slot(p[0],"a")}${slot(p[1],"b")}</div>`;
+    }).join("");
+    return `<div class="rnd ${col.side}"><div class="rlab">${col.lab}</div><div class="cells">${cells}</div></div>`;
+  }).join("");
+  renderChamp();
+}
+function renderChamp(){
+  const el=document.getElementById("champ"), c=koWin[104];
+  if(c){ el.innerHTML=`<div class="champ-in"><span class="cup">★</span><div><span class="cl">World Champion</span><span class="cn">${c}</span></div></div>`; el.classList.add("show"); }
+  else { el.innerHTML=""; el.classList.remove("show"); }
+}
+document.getElementById("bracket").addEventListener("click", e=>{
+  const slot=e.target.closest(".slot"); if(!slot || slot.classList.contains("empty")) return;
+  const m=+slot.dataset.m, s=slot.dataset.s, team=koParts(m)[s==="a"?0:1];
+  if(!team || m===103) return;            // third-place box is display-only
+  if(koWin[m]===team) delete koWin[m];     // tap the chosen team again to undo
+  else koWin[m]=team;
+  koValidate(); koSave(); renderBracket();
+});
+document.getElementById("koRandom").addEventListener("click", ()=>{
+  const order=[...Object.keys(KO.seeds).map(Number),89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104];
+  order.forEach(m=>{ if(m===103) return; const p=koParts(m); if(p[0]&&p[1]) koWin[m]= Math.random()<0.5?p[0]:p[1]; });
+  koSave(); renderBracket(); toast("Simulated the bracket to a champion");
+});
+document.getElementById("koClear").addEventListener("click", ()=>{
+  koWin={}; koSave(); renderBracket(); toast("Cleared the bracket");
+});
+
+/* ---------- tab switching ---------- */
+let koRendered=false;
+document.querySelectorAll(".tab").forEach(t=> t.addEventListener("click", ()=>{
+  const ko = t.dataset.view==="knockout";
+  document.querySelectorAll(".tab").forEach(x=> x.classList.toggle("on", x===t));
+  document.body.classList.toggle("ko", ko);
+  document.getElementById("view-groups").hidden = ko;
+  document.getElementById("view-knockout").hidden = !ko;
+  if(ko && !koRendered){ renderBracket(); koRendered=true; }
+  window.scrollTo(0,0);
+}));
 </script>
 </body>
 </html>
